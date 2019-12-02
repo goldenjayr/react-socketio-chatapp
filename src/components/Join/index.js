@@ -20,7 +20,7 @@ const Join = (props) => {
                     <TextField id="room" label="Room" placeholder="room 1" onChange={e => setRoom(e)} />
                 </div>
                 <Link to={`/chat?name=${name}&room=${room}`} onClick={e => (!name || !room) && e.preventDefault()}>
-                    <Button raised secondary iconBefore={false} type="submit">Sign In</Button>
+                    <Button raised primary iconBefore={false} type="submit">Sign In</Button>
                 </Link>
             </div>
         </div>

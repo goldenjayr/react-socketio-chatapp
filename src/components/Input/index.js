@@ -10,6 +10,7 @@ const Input = (props) => {
             <form>
                 <div className="input">
                     <TextField
+                    id="message"
                     type="text"
                     placeholder="Type a message..."
                     value={message}
