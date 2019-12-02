@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import queryString from 'query-string'
 import io from 'socket.io-client'
+import ss from 'socket.io-stream'
 
 import InfoBar from '../InfoBar/'
 import Input from '../Input/'
@@ -19,7 +20,8 @@ const Chat = ({location, history}) => {
     const [image, setImage] = useState('')
     const [messages, setMessages] = useState([])
     const [roomData, setRoomData] = useState({})
-    const ENDPOINT = '10.111.2.53:4000'
+    const ENDPOINT = 'localhost:4000'
+    const stream = ss.createStream()
 
     useEffect(() => {
         const {name, room} = queryString.parse(location.search)
@@ -40,6 +42,7 @@ const Chat = ({location, history}) => {
 
     useEffect(() => {
         socket.on('admin-message', (message) => {
+        console.log("TCL: message", message)
             setMessages(state => {
                 return [
                     ...state,
@@ -61,11 +64,12 @@ const Chat = ({location, history}) => {
     const sendMessage = (e)=> {
         e.preventDefault()
         if (message){
-            socket.emit('send-message', message, () => setMessage(''))
+        ss(socket).emit('send-message', stream, message, () => setMessage(''))
         }
 
         if (image) {
-            socket.emit('send-message', image, () => setImage(''))
+            ss(socket).emit('send-message', stream, {image: image.name}, () => setImage(''))
+            ss.createBlobReadStream(image).pipe(stream)
         }
     }
 
@@ -85,8 +89,6 @@ const Chat = ({location, history}) => {
         messages,
         name
     }
-    // console.log("TCL: Chat -> message", message)
-    // console.log("TCL: Chat -> messages", messages)
     return (
         <div className="chat">
             <div className="chat-container">
