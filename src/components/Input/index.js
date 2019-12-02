@@ -1,21 +1,33 @@
 import React from 'react'
+import { TextField, Button } from 'react-md'
+
+import './Input.scss'
 
 const Input = (props) => {
     const { message, setMessage, sendMessage } = props
     return (
-        <form>
-            <input
-            type="text"
-            placeholder="Type a message..."
-            value={message}
-            onChange={e => setMessage(e.target.value)}
-            onKeyPress={e => e.key === 'Enter' ? sendMessage(e) : null}
-            />
-            <button
-            type="submit"
-            onClick={e => sendMessage(e)}
-            >Send</button>
-        </form>
+        <div>
+            <form>
+                <div className="input">
+                    <TextField
+                    type="text"
+                    placeholder="Type a message..."
+                    value={message}
+                    onChange={e => setMessage(e)}
+                    onKeyDown={e => e.key === 'Enter' ? sendMessage(e) : null}
+                    className="input-message"
+                    fullWidth
+                    />
+                    <Button
+                    raised
+                    primary
+                    swapTheming
+                    type="submit"
+                    onClick={e => sendMessage(e)}
+                    >Send</Button>
+                </div>
+            </form>
+        </div>
     )
 }
 

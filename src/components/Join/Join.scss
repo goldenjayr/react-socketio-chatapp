@@ -1,0 +1,12 @@
+.join {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+
+    &-text-fields{
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+}
+

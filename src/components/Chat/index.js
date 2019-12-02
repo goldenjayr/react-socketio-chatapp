@@ -6,6 +6,8 @@ import InfoBar from '../InfoBar/'
 import Input from '../Input/'
 import Messages from '../Messages/'
 
+import './Chat.scss'
+
 let socket
 
 const Chat = ({location}) => {
@@ -55,10 +57,12 @@ const Chat = ({location}) => {
         name
     }
     return (
-        <div>
-            <InfoBar room={room} />
-            <Messages {...messagesProps} />
-            <Input {...inputProps} />
+        <div className="chat">
+            <div>
+                <InfoBar room={room} />
+                <Messages {...messagesProps} />
+                <Input {...inputProps} />
+            </div>
         </div>
     )
 }

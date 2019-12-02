@@ -1,0 +1,11 @@
+.infobar {
+    display: flex;
+    justify-content: space-between;
+    .icon {
+        margin: 5px;
+
+        &.icon-close {
+            align-self: flex-end;
+        }
+    }
+}
