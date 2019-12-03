@@ -21,7 +21,6 @@ const Chat = ({location, history}) => {
     const [messages, setMessages] = useState([])
     const [roomData, setRoomData] = useState({})
     const ENDPOINT = 'localhost:4000'
-    const stream = ss.createStream()
 
     useEffect(() => {
         const {name, room} = queryString.parse(location.search)
@@ -41,8 +40,21 @@ const Chat = ({location, history}) => {
     },[ENDPOINT, location.search, history])
 
     useEffect(() => {
-        socket.on('admin-message', (message) => {
-        console.log("TCL: message", message)
+        ss(socket).on('admin-message-image', (stream, message) => {
+            const binaryString = ''
+            stream.on('data', (data) => {
+                console.log("TCL: data", data)
+            })
+            console.log("TCL: stream", stream)
+            console.log("TCL: message", message)
+            setMessages(state => {
+                return [
+                    ...state,
+                    message
+                ]
+            })
+        })
+        socket.on('admin-message', message => {
             setMessages(state => {
                 return [
                     ...state,
@@ -62,14 +74,23 @@ const Chat = ({location, history}) => {
     }, [roomData])
 
     const sendMessage = (e)=> {
+        const stream = ss.createStream()
         e.preventDefault()
         if (message){
-        ss(socket).emit('send-message', stream, message, () => setMessage(''))
+            ss(socket).emit('send-message', stream, message, () => setMessage(''))
         }
 
         if (image) {
             ss(socket).emit('send-message', stream, {image: image.name}, () => setImage(''))
-            ss.createBlobReadStream(image).pipe(stream)
+            const blobStream = ss.createBlobReadStream(image)
+            let size = 0
+
+            blobStream.on('data', (chunk) => {
+                size += chunk.length
+                console.log(Math.floor(size / image.size * 100) + '%')
+            })
+
+            blobStream.pipe(stream)
         }
     }
 

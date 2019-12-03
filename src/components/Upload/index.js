@@ -13,9 +13,7 @@ const Upload = ({image, setImage, sendMessage}) => {
     }
 
     const handeSubmit = (e) => {
-        console.log("TCL: handeSubmit -> e", e)
         e.preventDefault()
-        console.log(fileUpload)
         sendMessage(e)
         clearFileUpload()
     }
