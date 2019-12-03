@@ -42,17 +42,20 @@ const Chat = ({location, history}) => {
     useEffect(() => {
         ss(socket).on('admin-message-image', (stream, message) => {
             const binaryString = ''
-            stream.on('data', (data) => {
-                console.log("TCL: data", data)
+            const parts = []
+            stream.on('data', (chunk) => {
+                parts.push(chunk)
             })
-            console.log("TCL: stream", stream)
-            console.log("TCL: message", message)
-            setMessages(state => {
-                return [
-                    ...state,
-                    message
-                ]
+            message.text = parts
+            stream.on('end', () => {
+                setMessages(state => {
+                    return [
+                        ...state,
+                        message
+                    ]
+                })
             })
+
         })
         socket.on('admin-message', message => {
             setMessages(state => {

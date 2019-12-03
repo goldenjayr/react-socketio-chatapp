@@ -4,6 +4,7 @@ import ReactEmoji from 'react-emoji'
 import './Message.scss'
 
 const Message = ({message: { user, text }, name}) => {
+    console.log("TCL: Message -> text", text)
     const [imagePreviewUrl, setImagePreviewUrl] = useState('')
 
     let isSentByCurrentUser = false
@@ -13,9 +14,8 @@ const Message = ({message: { user, text }, name}) => {
         isSentByCurrentUser = true
     }
 
-    const parseImage = (image) => {
-        const arrayBufferView = new Uint8Array(image);
-        const blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
+    const parseImage = (parts) => {
+        const blob = new Blob( [ ...parts ], { type: "image/jpeg" } );
         const urlCreator = window.URL || window.webkitURL;
         const imageUrl = urlCreator.createObjectURL( blob );
         setImagePreviewUrl(imageUrl)
