@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 import Join from './components/Join/'
 import Chat from './components/Chat/'
+import Uploads from './components/Uploads/'
 
 const routes = [
   {
@@ -18,6 +19,13 @@ const routes = [
       key: 'chat',
       path: '/chat',
       component: Chat
+    }
+  },
+  {
+    props: {
+      key: 'uploads',
+      path: '/uploads',
+      component: Uploads
     }
   }
 ]

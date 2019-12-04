@@ -4,7 +4,7 @@ import { FileInput, Button } from 'react-md'
 import './Upload.scss'
 
 const Upload = ({image, setImage, sendMessage}) => {
-    const [imagePreviewUrl, setImagePreviewUrl] = useState('')
+    const [imagePreviewUrl, setImagePreviewUrl] = useState([])
     const fileUpload = useRef(null)
 
     const clearFileUpload = () => {
@@ -19,16 +19,21 @@ const Upload = ({image, setImage, sendMessage}) => {
     }
 
     const handleImageChange = (e) => {
-        let file = e
         const urlCreator = window.URL || window.webkitURL;
-        const imageUrl = urlCreator.createObjectURL( file );
-        setImage(file)
-        setImagePreviewUrl(imageUrl)
+        e.forEach(file => {
+            const imageUrl = urlCreator.createObjectURL( file );
+            setImage((state) => {
+                return [...state, file]
+            })
+            setImagePreviewUrl(state => [...state, imageUrl])
+        })
 
     }
     let imagePreview = null;
-    if (imagePreviewUrl) {
-        imagePreview = (<img width="300" height="auto" src={imagePreviewUrl} alt="preview" />);
+    if (imagePreviewUrl.length > 0) {
+        imagePreview = imagePreviewUrl.map(url => {
+            return (<img key={Date.now()} width="300" height="auto" src={url} alt="preview" />);
+        })
     } else {
         imagePreview = (<div className="previewText">Please select an Image for Preview</div>);
     }
@@ -44,6 +49,7 @@ const Upload = ({image, setImage, sendMessage}) => {
                     ref={fileUpload}
                     onChange={handleImageChange}
                     icon={null}
+                    multiple
                     className="fileupload" />
                 {imagePreviewUrl &&
                 <Button

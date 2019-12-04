@@ -17,7 +17,7 @@ const Chat = ({location, history}) => {
     const [name, setName] = useState('')
     const [room, setRoom] = useState('')
     const [message, setMessage] = useState('')
-    const [image, setImage] = useState('')
+    const [image, setImage] = useState([])
     const [messages, setMessages] = useState([])
     const [roomData, setRoomData] = useState({})
     const ENDPOINT = 'localhost:4000'
@@ -76,24 +76,27 @@ const Chat = ({location, history}) => {
 
     }, [roomData])
 
-    const sendMessage = (e)=> {
-        const stream = ss.createStream()
+    const sendMessage = (e) => {
         e.preventDefault()
         if (message){
+            const stream = ss.createStream()
             ss(socket).emit('send-message', stream, message, () => setMessage(''))
         }
 
-        if (image) {
-            ss(socket).emit('send-message', stream, {image: image.name}, () => setImage(''))
-            const blobStream = ss.createBlobReadStream(image)
-            let size = 0
+        if (image.length > 0) {
+            image.forEach(img => {
+                const stream = ss.createStream()
+                ss(socket).emit('send-message', stream, {image: img.name}, () => setImage(''))
+                const blobStream = ss.createBlobReadStream(img)
+                let size = 0
 
-            blobStream.on('data', (chunk) => {
-                size += chunk.length
-                console.log(Math.floor(size / image.size * 100) + '%')
+                blobStream.on('data', (chunk) => {
+                    size += chunk.length
+                    console.log(`Uploading ${img.name} --- ${Math.floor(size / img.size * 100)} %`)
+                })
+
+                blobStream.pipe(stream)
             })
-
-            blobStream.pipe(stream)
         }
     }
 
