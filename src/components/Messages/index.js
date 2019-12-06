@@ -1,15 +1,21 @@
 import React from 'react'
+import { css } from 'glamor';
 import ScrollToBottom from 'react-scroll-to-bottom'
 
 import Message from '../Message/'
 
-const Messages = ({messages, name}) => {
+const ROOT_CSS = css({
+    height: 400,
+    width: '100%'
+  });
+
+const Messages = ({messages, name, room}) => {
     return (
-     <ScrollToBottom>
+     <ScrollToBottom className={ ROOT_CSS }>
          {messages.map((message, idx) => {
              return (
              <div key={idx}>
-                 <Message name={name} message={message} />
+                 <Message room={room} name={name} message={message} />
              </div>
              )
          })}

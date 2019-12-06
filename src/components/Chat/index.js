@@ -20,7 +20,7 @@ const Chat = ({location, history}) => {
     const [image, setImage] = useState([])
     const [messages, setMessages] = useState([])
     const [roomData, setRoomData] = useState({})
-    const ENDPOINT = 'localhost:4000'
+    const ENDPOINT = 'localhost:4000/texts'
 
     useEffect(() => {
         const {name, room} = queryString.parse(location.search)
@@ -40,23 +40,23 @@ const Chat = ({location, history}) => {
     },[ENDPOINT, location.search, history])
 
     useEffect(() => {
-        ss(socket).on('admin-message-image', (stream, message) => {
-            const binaryString = ''
-            const parts = []
-            stream.on('data', (chunk) => {
-                parts.push(chunk)
-            })
-            message.text = parts
-            stream.on('end', () => {
-                setMessages(state => {
-                    return [
-                        ...state,
-                        message
-                    ]
-                })
-            })
+        // ss(socket).on('admin-message-image', (stream, message) => {
+        //     const binaryString = ''
+        //     const parts = []
+        //     stream.on('data', (chunk) => {
+        //         parts.push(chunk)
+        //     })
+        //     message.text = parts
+        //     stream.on('end', () => {
+        //         setMessages(state => {
+        //             return [
+        //                 ...state,
+        //                 message
+        //             ]
+        //         })
+        //     })
 
-        })
+        // })
         socket.on('admin-message', message => {
             setMessages(state => {
                 return [
@@ -79,25 +79,24 @@ const Chat = ({location, history}) => {
     const sendMessage = (e) => {
         e.preventDefault()
         if (message){
-            const stream = ss.createStream()
-            ss(socket).emit('send-message', stream, message, () => setMessage(''))
+            socket.emit('send-message', message, () => setMessage(''))
         }
 
-        if (image.length > 0) {
-            image.forEach(img => {
-                const stream = ss.createStream()
-                ss(socket).emit('send-message', stream, {image: img.name}, () => setImage(''))
-                const blobStream = ss.createBlobReadStream(img)
-                let size = 0
+        // if (image.length > 0) {
+        //     image.forEach(img => {
+        //         const stream = ss.createStream()
+        //         ss(socket).emit('send-message', stream, {image: img.name}, () => setImage(''))
+        //         const blobStream = ss.createBlobReadStream(img)
+        //         let size = 0
 
-                blobStream.on('data', (chunk) => {
-                    size += chunk.length
-                    console.log(`Uploading ${img.name} --- ${Math.floor(size / img.size * 100)} %`)
-                })
+        //         blobStream.on('data', (chunk) => {
+        //             size += chunk.length
+        //             console.log(`Uploading ${img.name} --- ${Math.floor(size / img.size * 100)} %`)
+        //         })
 
-                blobStream.pipe(stream)
-            })
-        }
+        //         blobStream.pipe(stream)
+        //     })
+        // }
     }
 
     const inputProps = {
@@ -113,8 +112,10 @@ const Chat = ({location, history}) => {
     }
 
     const messagesProps = {
+        roomData,
         messages,
-        name
+        name,
+        room
     }
     return (
         <div className="chat">

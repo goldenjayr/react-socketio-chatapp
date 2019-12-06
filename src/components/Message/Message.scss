@@ -11,6 +11,10 @@
 }
 
 .message-another-user {
+    &-row {
+        display: flex;
+        align-items: center;
+    }
     &-text {
         display: inline-block;
         background-color: #e0e0e0;

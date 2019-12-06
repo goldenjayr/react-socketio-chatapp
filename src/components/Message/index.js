@@ -3,13 +3,12 @@ import ReactEmoji from 'react-emoji'
 
 import './Message.scss'
 
-const Message = ({message: { user, text }, name}) => {
+const Message = ({message: { user, text }, name, room}) => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState('')
 
     let isSentByCurrentUser = false
     const trimmedName = name.trim().toLowerCase()
-
-    if (user === trimmedName){
+    if (user.name === trimmedName){
         isSentByCurrentUser = true
     }
 
@@ -45,11 +44,13 @@ const Message = ({message: { user, text }, name}) => {
         ):
         (
             <div className="message-another-user">
-                <div className="message-another-user-text">
-                    <img className="message-profilepic" src={`https://robohash.org/${user}?set=set5`} alt='profile' />
-                    {imagePreview}
+                <div className="message-another-user-row">
+                    <img className="message-profilepic" src={`https://robohash.org/${user.name}${room}?set=set5`} alt='profile' />
+                    <div className="message-another-user-text">
+                         {imagePreview}
+                    </div>
                 </div>
-                <p className="message-label">{user}</p>
+                <p className="message-label">{user.name}</p>
             </div>
         )
     )
