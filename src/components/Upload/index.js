@@ -3,7 +3,7 @@ import { FileInput, Button } from 'react-md'
 
 import './Upload.scss'
 
-const Upload = ({file, setFile, sendFiles}) => {
+const Upload = ({file, setFile, uploadFile}) => {
     const [filePreview, setFilePreview] = useState([])
     const fileUpload = useRef(null)
 
@@ -13,7 +13,7 @@ const Upload = ({file, setFile, sendFiles}) => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        sendFiles(e)
+        uploadFile(e)
         clearFileUpload()
     }
 

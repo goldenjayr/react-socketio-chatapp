@@ -17,7 +17,6 @@ const Chat = ({location, history}) => {
     const [name, setName] = useState('')
     const [room, setRoom] = useState('')
     const [message, setMessage] = useState('')
-    const [image, setImage] = useState([])
     const [file, setFile] = useState([])
     const [messages, setMessages] = useState([])
     const [roomData, setRoomData] = useState({})
@@ -79,18 +78,15 @@ const Chat = ({location, history}) => {
 
     }, [roomData])
 
-    const uploadFile = (e) => {
+    const uploadFile = useCallback((e) => {
         e.preventDefault()
-        if (file) {
+        if (file.length) {
             namespace = 'uploads'
             socket = io(ENDPOINT + namespace)
             socket.emit('file-upload', )
         }
-    }
+    }, [])
 
-    const sendFiles = useCallback(e => {
-            e.preventDefault()
-        }, [])
 
     const sendMessage = (e) => {
         e.preventDefault()
@@ -152,7 +148,7 @@ const Chat = ({location, history}) => {
     const uploadProps = {
         file,
         setFile,
-        sendFiles
+        uploadFile
     }
 
     const messagesProps = {
@@ -164,7 +160,7 @@ const Chat = ({location, history}) => {
     return (
         <div className="chat">
             <div className="chat-container">
-                <InfoBar room={room} />
+                <InfoBar name={name} room={room} />
                 <Messages {...messagesProps} />
                 <Input {...inputProps} />
                 <Upload {...uploadProps} />
