@@ -1,46 +1,54 @@
-import React, {useState, useRef} from 'react'
+import React, {memo, useState, useRef, useEffect} from 'react'
 import { FileInput, Button } from 'react-md'
 
 import './Upload.scss'
 
-const Upload = ({image, setImage, sendMessage}) => {
-    const [imagePreviewUrl, setImagePreviewUrl] = useState([])
+const Upload = ({file, setFile, sendFiles}) => {
+    const [filePreview, setFilePreview] = useState([])
     const fileUpload = useRef(null)
 
     const clearFileUpload = () => {
         fileUpload.current.value = ''
-        setImagePreviewUrl('')
     }
 
-    const handeSubmit = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault()
-        sendMessage(e)
+        sendFiles(e)
         clearFileUpload()
     }
 
-    const handleImageChange = (e) => {
-        const urlCreator = window.URL || window.webkitURL;
-        e.forEach(file => {
-            const imageUrl = urlCreator.createObjectURL( file );
-            setImage((state) => {
-                return [...state, file]
-            })
-            setImagePreviewUrl(state => [...state, imageUrl])
-        })
 
-    }
-    let imagePreview = null;
-    if (imagePreviewUrl.length > 0) {
-        imagePreview = imagePreviewUrl.map(url => {
+    const urlToImage = (urls) => {
+        const preview = urls.map(url => {
             return (<img key={Date.now()} width="300" height="auto" src={url} alt="preview" />);
         })
-    } else {
-        imagePreview = (<div className="previewText">Please select an Image for Preview</div>);
+        setFilePreview((state) => [...state, ...preview])
     }
+
+    const handleImageChange = (e) => {
+        console.log('This has triggered')
+        const urlCreator = window.URL || window.webkitURL;
+        const imageUrlArr = []
+        const files = []
+        e.forEach(item => {
+        console.log("TCL: handleImageChange -> item", item)
+            const imageUrl = urlCreator.createObjectURL( item );
+            imageUrlArr.push(imageUrl)
+            files.push(item)
+        })
+        urlToImage(imageUrlArr)
+        setFile((state) => {
+            return [...state, ...files]
+        })
+    }
+
+
+
+    console.log("TCL: Upload -> filePreview", filePreview)
 
     return (
         <div className="fileupload-container">
-            <form onSubmit={handeSubmit}>
+            <form onSubmit={handleSubmit}>
                 <FileInput
                     id="image-input-2"
                     accept="image/*"
@@ -51,7 +59,7 @@ const Upload = ({image, setImage, sendMessage}) => {
                     icon={null}
                     multiple
                     className="fileupload" />
-                {imagePreviewUrl &&
+                {filePreview.length > 0 &&
                 <Button
                 raised
                 secondary
@@ -60,10 +68,10 @@ const Upload = ({image, setImage, sendMessage}) => {
                 }
             </form>
             <div className="image-preview">
-                {imagePreview}
+                {filePreview}
             </div>
         </div>
     )
 }
 
-export default Upload
+export default memo(Upload)

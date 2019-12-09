@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 import queryString from 'query-string'
 import io from 'socket.io-client'
 import ss from 'socket.io-stream'
@@ -18,13 +18,16 @@ const Chat = ({location, history}) => {
     const [room, setRoom] = useState('')
     const [message, setMessage] = useState('')
     const [image, setImage] = useState([])
+    const [file, setFile] = useState([])
     const [messages, setMessages] = useState([])
     const [roomData, setRoomData] = useState({})
-    const ENDPOINT = 'localhost:4000/texts'
+    const ENDPOINT = 'localhost:4000/'
+    let namespace
 
     useEffect(() => {
+        namespace = 'texts'
         const {name, room} = queryString.parse(location.search)
-        socket = io(ENDPOINT)
+        socket = io(ENDPOINT + namespace)
         setName(name)
         setRoom(room)
 
@@ -76,6 +79,19 @@ const Chat = ({location, history}) => {
 
     }, [roomData])
 
+    const uploadFile = (e) => {
+        e.preventDefault()
+        if (file) {
+            namespace = 'uploads'
+            socket = io(ENDPOINT + namespace)
+            socket.emit('file-upload', )
+        }
+    }
+
+    const sendFiles = useCallback(e => {
+            e.preventDefault()
+        }, [])
+
     const sendMessage = (e) => {
         e.preventDefault()
         if (message){
@@ -83,8 +99,36 @@ const Chat = ({location, history}) => {
         }
 
         // if (image.length > 0) {
+        // if (image.length > 0) {
+        //     image.forEach(img =
+        // if (image.length > 0) {
         //     image.forEach(img => {
         //         const stream = ss.createStream()
+        //         ss(socket).emit('send-message', stream, {image: img.name}, () => setImage(''))
+        //         const blobStream = ss.createBlobReadStream(img)
+        //         let size = 0
+
+        //         blobStream.on('data', (chunk) => {
+        //             size += chunk.length
+        //             console.log(`Uploading ${img.name} --- ${Math.floor(size / img.size * 100)} %`)
+        //         })
+
+        //         blobStream.pipe(stream)
+        //     })
+        // }> {
+        //         const stream = ss.createStream()
+        //         ss(socket).emit('send-message', stream, {image: img.name}, () => setImage(''))
+        //         const blobStream = ss.createBlobReadStream(img)
+        //         let size = 0
+
+        //         blobStream.on('data', (chunk) => {
+        //             size += chunk.length
+        //             console.log(`Uploading ${img.name} --- ${Math.floor(size / img.size * 100)} %`)
+        //         })
+
+        //         blobStream.pipe(stream)
+        //     })
+        // }s.createStream()
         //         ss(socket).emit('send-message', stream, {image: img.name}, () => setImage(''))
         //         const blobStream = ss.createBlobReadStream(img)
         //         let size = 0
@@ -106,9 +150,9 @@ const Chat = ({location, history}) => {
     }
 
     const uploadProps = {
-        image,
-        setImage,
-        sendMessage
+        file,
+        setFile,
+        sendFiles
     }
 
     const messagesProps = {
