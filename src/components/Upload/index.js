@@ -3,52 +3,39 @@ import { FileInput, Button } from 'react-md'
 
 import './Upload.scss'
 
-const Upload = ({file, setFile, uploadFile}) => {
+const Upload = ({file, setFile}) => {
     const [filePreview, setFilePreview] = useState([])
     const fileUpload = useRef(null)
 
-    const clearFileUpload = () => {
-        fileUpload.current.value = ''
-    }
-
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        uploadFile(e)
-        clearFileUpload()
-    }
-
-
     const urlToImage = (urls) => {
         const preview = urls.map(url => {
-            return (<img key={Date.now()} width="300" height="auto" src={url} alt="preview" />);
+            return (<img key={Math.random()} width="300" height="auto" src={url} alt="preview" />);
         })
-        setFilePreview((state) => [...state, ...preview])
+        setFilePreview((state) => preview)
     }
 
-    const handleImageChange = (e) => {
-        console.log('This has triggered')
-        const urlCreator = window.URL || window.webkitURL;
-        const imageUrlArr = []
-        const files = []
-        e.forEach(item => {
-        console.log("TCL: handleImageChange -> item", item)
-            const imageUrl = urlCreator.createObjectURL( item );
-            imageUrlArr.push(imageUrl)
-            files.push(item)
-        })
-        urlToImage(imageUrlArr)
+    const handleImageChange = (files) => {
         setFile((state) => {
             return [...state, ...files]
         })
     }
 
+    useEffect(() => {
+        const urlCreator = window.URL || window.webkitURL;
+        const imageUrlArr = []
+        file.forEach(item => {
+            const imageUrl = urlCreator.createObjectURL( item );
+            imageUrlArr.push(imageUrl)
+        })
+        urlToImage(imageUrlArr)
+
+    }, [file])
 
 
-    console.log("TCL: Upload -> filePreview", filePreview)
 
     return (
         <div className="fileupload-container">
-            <form onSubmit={handleSubmit}>
+            <form>
                 <FileInput
                     id="image-input-2"
                     accept="image/*"
@@ -59,13 +46,6 @@ const Upload = ({file, setFile, uploadFile}) => {
                     icon={null}
                     multiple
                     className="fileupload" />
-                {filePreview.length > 0 &&
-                <Button
-                raised
-                secondary
-                iconBefore={false}
-                type="submit">Upload</Button>
-                }
             </form>
             <div className="image-preview">
                 {filePreview}

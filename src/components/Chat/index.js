@@ -78,20 +78,26 @@ const Chat = ({location, history}) => {
 
     }, [roomData])
 
-    const uploadFile = useCallback((e) => {
-        e.preventDefault()
-        if (file.length) {
-            namespace = 'uploads'
-            socket = io(ENDPOINT + namespace)
-            socket.emit('file-upload', )
-        }
-    }, [])
+    const composeData = () => {
 
+        return { message, file: file.map(f => f.name), name, room }
+    }
 
-    const sendMessage = (e) => {
+    const clearData = () => {
+        setMessage('')
+        setFile([])
+    }
+
+    const sendData = (e) => {
         e.preventDefault()
-        if (message){
-            socket.emit('send-message', message, () => setMessage(''))
+        const data = composeData()
+        console.log("TCL: sendData -> data", data)
+        if (data){
+            file.forEach(item => {
+                const stream = ss.createStream()
+                ss(socket).emit('send-data', stream, {name, room, file: {name: item.name, size: item.size}}, () => clearData())
+                ss.createBlobReadStream(item).pipe(stream)
+            })
         }
 
         // if (image.length > 0) {
@@ -142,13 +148,12 @@ const Chat = ({location, history}) => {
     const inputProps = {
         message,
         setMessage,
-        sendMessage
+        sendData
     }
 
     const uploadProps = {
         file,
-        setFile,
-        uploadFile
+        setFile
     }
 
     const messagesProps = {

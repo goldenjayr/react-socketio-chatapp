@@ -4,7 +4,7 @@ import { TextField, Button } from 'react-md'
 import './Input.scss'
 
 const Input = (props) => {
-    const { message, setMessage, sendMessage } = props
+    const { message, setMessage, sendData } = props
     return (
         <div>
             <form>
@@ -15,7 +15,7 @@ const Input = (props) => {
                     placeholder="Type a message..."
                     value={message}
                     onChange={e => setMessage(e)}
-                    onKeyDown={e => e.key === 'Enter' ? sendMessage(e) : null}
+                    onKeyDown={e => e.key === 'Enter' ? sendData(e) : null}
                     className="input-message"
                     fullWidth
                     />
@@ -24,7 +24,7 @@ const Input = (props) => {
                     primary
                     swapTheming
                     type="submit"
-                    onClick={e => sendMessage(e)}
+                    onClick={e => sendData(e)}
                     >Send</Button>
                 </div>
             </form>
