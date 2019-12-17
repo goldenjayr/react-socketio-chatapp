@@ -27,18 +27,19 @@ const Uploads = ({location, history}) => {
     }, [])
 
     useEffect(() => {
-        ss(socket).on('upload-data', (stream) => {
+        ss(socket).on('upload-data', (stream, data) => {
+        console.log("TCL: Uploads -> data", data)
 
             const parts = []
             stream.on('data', chunk => {
-
+            console.log("TCL: Uploads -> chunk", chunk)
                 parts.push(chunk)
+                if(parts.length === data.length) {
+                    parseImage(parts)
+                }
             })
 
-            stream.on('end', () => {
-                parseImage(parts)
-                stream.end()
-            })
+
         })
     }, )
 
@@ -51,6 +52,8 @@ const Uploads = ({location, history}) => {
 
 
     const parseImage = (parts) => {
+        console.log("TCL: parseImage -> parts", parts)
+        // const arrayBufferView = new Uint8Array(image);
         const blob = new Blob( [ ...parts ], { type: "image/jpeg" } );
         const urlCreator = window.URL || window.webkitURL;
         const imageUrl = urlCreator.createObjectURL( blob );
